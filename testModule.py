@@ -4,7 +4,11 @@ from kivy.uix.button import Button
 from kivy.uix.image import Image
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.textinput import TextInput
+from kivy.core.audio import SoundLoader
 import random
+
+cards_list = []
 
 #classes
 class Timer():
@@ -25,11 +29,11 @@ class Timer():
 
 
 class Card():
-    name = 'artem'
+    name = ''
     description = ''
     sound = ''
 
-    __timer = Timer()
+    #__timer = Timer()
 
 
 #фоны
@@ -50,19 +54,65 @@ def convector(value, parent_value):
   return value/parent_value
 
 def create_card(instance):
+    card = Card()
+
     rand = random.randint(1,100)
     print('create card with id ' + str(rand) + str(instance.__sizeof__()))
+    
+    sound = SoundLoader.load('sound.mp3')
+    sound.play()
 
     new_card = Button(
-        text='+',
-        font_size=72,
-        size_hint=[convector(400, Window.width), convector(600, Window.height)],
+        size_hint=[convector(500, Window.width), convector(300, Window.height)],
         pos_hint={'center_x': .5, 'center_y': .5},
         background_color='#949494',
         background_normal='',
     )
 
+    card_accept = Button(
+        size_hint=[convector(100, Window.width), convector(50, Window.height)],
+        pos_hint={'center_x': convector(460, Window.width), 'center_y': convector(200, Window.width)},
+        background_color='#97F170',
+        background_normal='',
+    )
+
+    sec_input = TextInput(text='Секунды', font_size = 25,
+        size_hint=[convector(150, Window.width), convector(50, Window.height)],
+        pos_hint={'center_x': convector(435, Window.width), 'center_y': convector(340, Window.width)},
+        multiline=False,
+    )
+
+    min_input = TextInput(text='Минуты', font_size = 25,
+        size_hint=[convector(150, Window.width), convector(50, Window.height)],
+        pos_hint={'center_x': convector(270, Window.width), 'center_y': convector(340, Window.width)},
+        multiline=False,
+    )
+
+    hour_input = TextInput(text='Часы', font_size = 25,
+        size_hint=[convector(150, Window.width), convector(50, Window.height)],
+        pos_hint={'center_x': convector(105, Window.width), 'center_y': convector(340, Window.width)},
+        multiline=False,
+    )
+
+    name_input = TextInput(text='Имя', font_size = 25,
+        size_hint=[convector(480, Window.width), convector(50, Window.height)],
+        pos_hint={'center_x': .5, 'center_y': convector(290, Window.width)},
+        multiline=False,
+    )
+
+    desc_input = TextInput(text='Описание', font_size = 25,
+        size_hint=[convector(480, Window.width), convector(80, Window.height)],
+        pos_hint={'center_x': .5, 'center_y': convector(245, Window.width)},
+        multiline=True,
+    )
+
     frontLayout.add_widget(new_card)
+    frontLayout.add_widget(card_accept)
+    frontLayout.add_widget(sec_input)
+    frontLayout.add_widget(min_input)
+    frontLayout.add_widget(hour_input)
+    frontLayout.add_widget(name_input)
+    frontLayout.add_widget(desc_input)
 
 
 #Функции для работы приложения
