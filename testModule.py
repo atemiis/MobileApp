@@ -58,6 +58,8 @@ def create_card(instance):
 
     rand = random.randint(1,100)
     print('create card with id ' + str(rand) + str(instance.__sizeof__()))
+
+    cardLayout = FloatLayout()
     
     sound = SoundLoader.load('sound.mp3')
     sound.play()
@@ -106,13 +108,14 @@ def create_card(instance):
         multiline=True,
     )
 
-    frontLayout.add_widget(new_card)
-    frontLayout.add_widget(card_accept)
-    frontLayout.add_widget(sec_input)
-    frontLayout.add_widget(min_input)
-    frontLayout.add_widget(hour_input)
-    frontLayout.add_widget(name_input)
-    frontLayout.add_widget(desc_input)
+    cardLayout.add_widget(new_card)
+    cardLayout.add_widget(card_accept)
+    cardLayout.add_widget(sec_input)
+    cardLayout.add_widget(min_input)
+    cardLayout.add_widget(hour_input)
+    cardLayout.add_widget(name_input)
+    cardLayout.add_widget(desc_input)
+    frontLayout.add_widget(cardLayout)
 
 
 #Функции для работы приложения
