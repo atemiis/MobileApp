@@ -11,13 +11,13 @@ import random
 #массивы
 
 theme_colors = {
-    "white": "#FFD5B3",
-    "black": "#241C16",
-    "light": "#E5C379",
-    "base": "#EBAC49",
-    "dark": "#816335",
-    "accept": "#5FB753",
-    "denied": "#C54040"
+    "white": "#FFFFFF",
+    "black": "#222222",
+    "light": "#BAD9F1",
+    "base": "#A3CAFF",
+    "dark": "#699BE0",
+    "accept": "#78E289",
+    "denied": "#E27878"
 }
 
 cards_list = []
