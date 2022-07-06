@@ -65,6 +65,10 @@ def someone(self):
 def convector(value, parent_value):
   return value/parent_value
 
+def add_widlist(parent, list):
+    for widget in list:
+        parent.add_widget(widget)
+
 def create_card(instance):
     card = Card()
 
@@ -74,66 +78,63 @@ def create_card(instance):
     cardLayout = FloatLayout()
     
     sound = SoundLoader.load('sound.mp3')
-    #sound.play()
-    
-    new_card = Button(
-        size_hint=[convector(500, Window.width), convector(300, Window.height)],
-        pos_hint={'center_x': .5, 'center_y': .5},
-        background_color = theme_colors["dark"],
-        background_normal='',
-    )
+    sound.play()
 
-    card_accept = Button(
-        size_hint=[convector(100, Window.width), convector(50, Window.height)],
-        pos_hint={'center_x': convector(460, Window.width), 'center_y': convector(200, Window.width)},
-        background_color = theme_colors["accept"],
-        background_normal='',
-    )
+    widget_list = [
+        Button(
+            size_hint=[convector(500, Window.width), convector(300, Window.height)],
+            pos_hint={'center_x': .5, 'center_y': .5},
+            background_color = theme_colors["dark"],
+            background_normal='',
+        ),
 
-    card_denied = Button(
-        size_hint=[convector(100, Window.width), convector(50, Window.height)],
-        pos_hint={'center_x': convector(340, Window.width), 'center_y': convector(200, Window.width)},
-        background_color = theme_colors["denied"],
-        background_normal='',
-    )
+        Button(
+            size_hint=[convector(100, Window.width), convector(50, Window.height)],
+            pos_hint={'center_x': convector(460, Window.width), 'center_y': convector(200, Window.width)},
+            background_color = theme_colors["accept"],
+            background_normal='',
+        ),
 
-    sec_input = TextInput(text='Секунды', font_size = 25,
-        size_hint=[convector(150, Window.width), convector(50, Window.height)],
-        pos_hint={'center_x': convector(435, Window.width), 'center_y': convector(340, Window.width)},
-        multiline=False,
-    )
+        Button(
+            size_hint=[convector(100, Window.width), convector(50, Window.height)],
+            pos_hint={'center_x': convector(340, Window.width), 'center_y': convector(200, Window.width)},
+            background_color = theme_colors["denied"],
+            background_normal='',
+            outline_color = theme_colors["light"]
+        ),
 
-    min_input = TextInput(text='Минуты', font_size = 25,
-        size_hint=[convector(150, Window.width), convector(50, Window.height)],
-        pos_hint={'center_x': convector(270, Window.width), 'center_y': convector(340, Window.width)},
-        multiline=False,
-    )
+        TextInput(text='Секунды', font_size = 25,
+            size_hint=[convector(150, Window.width), convector(50, Window.height)],
+            pos_hint={'center_x': convector(435, Window.width), 'center_y': convector(340, Window.width)},
+            multiline=False,
+        ),
 
-    hour_input = TextInput(text='Часы', font_size = 25,
-        size_hint=[convector(150, Window.width), convector(50, Window.height)],
-        pos_hint={'center_x': convector(105, Window.width), 'center_y': convector(340, Window.width)},
-        multiline=False,
-    )
+        TextInput(text='Минуты', font_size = 25,
+            size_hint=[convector(150, Window.width), convector(50, Window.height)],
+            pos_hint={'center_x': convector(270, Window.width), 'center_y': convector(340, Window.width)},
+            multiline=False,
+        ),
 
-    name_input = TextInput(text='Имя', font_size = 25,
-        size_hint=[convector(480, Window.width), convector(50, Window.height)],
-        pos_hint={'center_x': .5, 'center_y': convector(290, Window.width)},
-        multiline=False,
-    )
+        TextInput(text='Часы', font_size = 25,
+            size_hint=[convector(150, Window.width), convector(50, Window.height)],
+            pos_hint={'center_x': convector(105, Window.width), 'center_y': convector(340, Window.width)},
+            multiline=False,
+        ),
 
-    desc_input = TextInput(text='Описание', font_size = 25,
-        size_hint=[convector(480, Window.width), convector(80, Window.height)],
-        pos_hint={'center_x': .5, 'center_y': convector(245, Window.width)},
-        multiline=True,
-    )
+        TextInput(text='Имя', font_size = 25,
+            size_hint=[convector(480, Window.width), convector(50, Window.height)],
+            pos_hint={'center_x': .5, 'center_y': convector(305, Window.width)},
+            multiline=False,
+        ),
 
-    cardLayout.add_widget(new_card)
-    cardLayout.add_widget(card_accept)
-    cardLayout.add_widget(sec_input)
-    cardLayout.add_widget(min_input)
-    cardLayout.add_widget(hour_input)
-    cardLayout.add_widget(name_input)
-    cardLayout.add_widget(desc_input)
+        TextInput(text='Описание', font_size = 25,
+            size_hint=[convector(480, Window.width), convector(100, Window.height)],
+            pos_hint={'center_x': .5, 'center_y': convector(255, Window.width)},
+            multiline=True,
+        )
+    ]
+
+    add_widlist(cardLayout, widget_list)
     frontLayout.add_widget(cardLayout)
 
 
