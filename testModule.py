@@ -8,9 +8,21 @@ from kivy.uix.textinput import TextInput
 from kivy.core.audio import SoundLoader
 import random
 
+#массивы
+
+theme_colors = {
+    "white": "#FFD5B3",
+    "black": "#241C16",
+    "light": "#E5C379",
+    "base": "#EBAC49",
+    "dark": "#816335",
+    "accept": "#5FB753",
+    "denied": "#C54040"
+}
+
 cards_list = []
 
-#classes
+#классы
 class Timer():
     __time = 0 # храним тут исходное время
 
@@ -62,19 +74,26 @@ def create_card(instance):
     cardLayout = FloatLayout()
     
     sound = SoundLoader.load('sound.mp3')
-    sound.play()
-
+    #sound.play()
+    
     new_card = Button(
         size_hint=[convector(500, Window.width), convector(300, Window.height)],
         pos_hint={'center_x': .5, 'center_y': .5},
-        background_color='#949494',
+        background_color = theme_colors["dark"],
         background_normal='',
     )
 
     card_accept = Button(
         size_hint=[convector(100, Window.width), convector(50, Window.height)],
         pos_hint={'center_x': convector(460, Window.width), 'center_y': convector(200, Window.width)},
-        background_color='#97F170',
+        background_color = theme_colors["accept"],
+        background_normal='',
+    )
+
+    card_denied = Button(
+        size_hint=[convector(100, Window.width), convector(50, Window.height)],
+        pos_hint={'center_x': convector(340, Window.width), 'center_y': convector(200, Window.width)},
+        background_color = theme_colors["denied"],
         background_normal='',
     )
 
@@ -135,7 +154,7 @@ class MainApp(App):
         )
 
         back = Button(
-            background_color = '#D9D9D9',
+            background_color = theme_colors["light"],
             background_disabled_normal = '',
             disabled = True
         )
@@ -145,7 +164,7 @@ class MainApp(App):
             font_size=72,
             size_hint = [convector(50, Window.width), convector(50, Window.height)],
             pos_hint = {'center_x': 0.92, 'center_y': 0.045},
-            background_color='#949494',
+            background_color = theme_colors["dark"],
             background_normal='',
         )
 
