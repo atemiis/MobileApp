@@ -6,6 +6,32 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 import random
 
+#classes
+class Timer():
+    __time = 0 # храним тут исходное время
+
+    def __init__(self, time):
+        self.__time = time
+
+    def get_time(self):
+        return self.__time
+
+    def set_time(self, time):
+        self.__time = time
+
+    def calculate_time(self):
+        pass
+
+
+
+class Card():
+    name = 'artem'
+    description = ''
+    sound = ''
+
+    __timer = Timer()
+
+
 #фоны
 mainBox = BoxLayout(padding=10)
 backLayout = FloatLayout()
