@@ -38,20 +38,20 @@ class Timer():
     def calculate_time(self):
         pass
 
-
-
 class Card():
+    unc_id = 0
     name = ''
     description = ''
     sound = ''
 
     #__timer = Timer()
 
-
 #фоны
 mainBox = BoxLayout(padding=10)
 backLayout = FloatLayout()
 frontLayout = FloatLayout()
+cardLayout = FloatLayout()
+frontLayout.add_widget(cardLayout)
 #фоны
 
 #Размер окна
@@ -62,6 +62,21 @@ Window.size = (540, 900)
 def someone(self):
     print("test")
 
+def close_card():
+    cardLayout.clear_widgets()
+    widget_list.clear()
+
+def register_data(self):
+    card = Card()
+    card.unc_id = random.randint(1,10000)
+
+    for widget in widget_list:
+        if(type(widget).__name__ == 'TextInput'):
+
+            print(widget.text)
+
+    close_card()
+
 def convector(value, parent_value):
   return value/parent_value
 
@@ -70,16 +85,10 @@ def add_widlist(parent, list):
         parent.add_widget(widget)
 
 def create_card(instance):
-    card = Card()
-
-    rand = random.randint(1,100)
-    print('create card with id ' + str(rand) + str(instance.__sizeof__()))
-
-    cardLayout = FloatLayout()
-    
     sound = SoundLoader.load('sound.mp3')
+    sound.volume = 0.1
     sound.play()
-
+    global widget_list
     widget_list = [
         Button(
             size_hint=[convector(500, Window.width), convector(300, Window.height)],
@@ -134,8 +143,10 @@ def create_card(instance):
         )
     ]
 
+    widget_list[1].bind(on_press=register_data)
+
     add_widlist(cardLayout, widget_list)
-    frontLayout.add_widget(cardLayout)
+
 
 
 #Функции для работы приложения
@@ -182,3 +193,6 @@ class MainApp(App):
 if __name__ == '__main__':
     app = MainApp()
     app.run()
+
+
+
