@@ -22,6 +22,8 @@ theme_colors = {
 
 cards_list = []
 
+#массивы
+
 #классы
 class Timer():
     __time = 0 # храним тут исходное время
@@ -146,8 +148,6 @@ def create_card(instance):
     widget_list[1].bind(on_press=register_data)
 
     add_widlist(cardLayout, widget_list)
-
-
 
 #Функции для работы приложения
 
