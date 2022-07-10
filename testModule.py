@@ -5,8 +5,11 @@ from kivy.uix.image import Image
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.gridlayout import GridLayout
 from kivy.core.audio import SoundLoader
 import random
+import time
 
 
 #Размер окна
@@ -25,8 +28,6 @@ theme_colors = {
 }
 
 cards_list = []
-#массивы
-
 #массивы
 
 #классы
@@ -52,7 +53,7 @@ class Card():
     hour = 0
     name = 'SimpleCard'
     desc = 'Desc of SimpleCard'
-    sound = 'Simple sound of SimpleCard' # save path sound
+    path_sound = 'sound.mp3' # save path sound
 
     def __init__(self, id, data):
         self.id = id
@@ -67,6 +68,12 @@ class Card():
         except: pass
         try: self.desc = str(data[4])
         except: pass
+    
+    def set_play_sound(volume):
+        sound = SoundLoader.load(self.path_sound)
+        sound.volume = volume
+
+        sound.play()
         
 #классы
 
@@ -75,6 +82,10 @@ mainBox = BoxLayout(padding=10)
 backLayout = FloatLayout()
 frontLayout = FloatLayout()
 cardLayout = FloatLayout()
+timerLayout = GridLayout(cols=1, spacing=10, size_hint_y=None)
+scroll = ScrollView(size_hint=(1, None), size=(Window.width, Window.height))
+scroll.add_widget(timerLayout)
+frontLayout.add_widget(scroll)
 frontLayout.add_widget(cardLayout)
 #фоны
 
@@ -82,7 +93,10 @@ frontLayout.add_widget(cardLayout)
 def someone(self):
     print("test")
 
-def close_card():
+def close_card(self = None):
+
+    if(len(cards_list) >= 5): print([item.id for item in cards_list])
+
     cardLayout.clear_widgets()
     widget_list.clear()
 
@@ -93,24 +107,20 @@ def register_data(self):
         if(type(widget).__name__ == 'TextInput'):
             card_data.append(widget.text)
 
-    card = Card(random.randint(1,10000), card_data)
+    card = Card(int(time.time()), card_data) 
     print(f"""
-DEBUG of CARD:
-sec: {card.id}
-sec: {card.sec}
-min: {card.min}
-hour: {card.hour}
-name: {card.name}
-desc: {card.desc}
+    DEBUG of CARD:
+    unic_id: {card.id}
+    sec: {card.sec}
+    min: {card.min}
+    hour: {card.hour}
+    name: {card.name}
+    desc: {card.desc}
     """)
 
+    cards_list.append(card)
+
     close_card()
-
-def set_play_sound(path, volume):
-    sound = SoundLoader.load(path)
-    sound.volume = volume
-
-    sound.play()
 
 def convector(value, parent_value):
   return value/parent_value
@@ -176,6 +186,7 @@ def create_card(instance):
     ]
 
     widget_list[1].bind(on_press=register_data)
+    widget_list[2].bind(on_press=close_card)
 
     add_widlist(cardLayout, widget_list)
 
@@ -184,6 +195,11 @@ def create_card(instance):
 class MainApp(App):
 
     def build(self):
+
+        for i in range(100):
+            btn = Button(text=str(i), size_hint_y=None, height=40)
+            timerLayout.add_widget(btn)
+
         background = Image(
             source='',
             allow_stretch = True,
