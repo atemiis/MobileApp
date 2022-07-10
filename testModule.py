@@ -8,8 +8,12 @@ from kivy.uix.textinput import TextInput
 from kivy.core.audio import SoundLoader
 import random
 
-#массивы
 
+#Размер окна
+Window.size = (540, 900)
+#Размер окна
+
+#массивы
 theme_colors = {
     "white": "#FFFFFF",
     "black": "#222222",
@@ -21,6 +25,7 @@ theme_colors = {
 }
 
 cards_list = []
+#массивы
 
 #классы
 class Timer():
@@ -45,7 +50,7 @@ class Card():
     hour = 0
     name = 'SimpleCard'
     desc = 'Desc of SimpleCard'
-    sound = 'Simple sound of SimpleCard'
+    sound = 'Simple sound of SimpleCard' # save path sound
 
     def __init__(self, id, data):
         self.id = id
@@ -61,6 +66,7 @@ class Card():
         try: self.desc = str(data[4])
         except: pass
         
+#классы
 
 #фоны
 mainBox = BoxLayout(padding=10)
@@ -69,10 +75,6 @@ frontLayout = FloatLayout()
 cardLayout = FloatLayout()
 frontLayout.add_widget(cardLayout)
 #фоны
-
-#Размер окна
-Window.size = (540, 900)
-#Размер окна
 
 #Функции для работы приложения
 def someone(self):
@@ -92,6 +94,7 @@ def register_data(self):
     card = Card(random.randint(1,10000), card_data)
     print(f"""
 DEBUG of CARD:
+sec: {card.id}
 sec: {card.sec}
 min: {card.min}
 hour: {card.hour}
@@ -171,14 +174,7 @@ def create_card(instance):
 
     add_widlist(cardLayout, widget_list)
 
-
-
 #Функции для работы приложения
-
-
-#Массивы цветов
-light_gray = [217,217,217,1]
-#Массивы цветов
 
 class MainApp(App):
 
@@ -217,6 +213,3 @@ class MainApp(App):
 if __name__ == '__main__':
     app = MainApp()
     app.run()
-
-
-
