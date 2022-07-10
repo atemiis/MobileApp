@@ -16,6 +16,10 @@ import time
 Window.size = (540, 900)
 #Размер окна
 
+#переменные
+card_open = False
+#переменные
+
 #массивы
 theme_colors = {
     "white": "#FFFFFF",
@@ -47,7 +51,7 @@ class Timer():
         pass
 
 class Card():
-    id = 0
+    __id = 0
     sec = 0
     min = 0
     hour = 0
@@ -74,6 +78,9 @@ class Card():
         sound.volume = volume
 
         sound.play()
+
+#class Timer(Card): 
+# Наверное нужен отдельный класс для карточки таймера
         
 #классы
 
@@ -82,7 +89,7 @@ mainBox = BoxLayout(padding=10)
 backLayout = FloatLayout()
 frontLayout = FloatLayout()
 cardLayout = FloatLayout()
-timerLayout = GridLayout(cols=1, spacing=10, size_hint_y=None)
+timerLayout = GridLayout(cols=1, spacing=10, size_hint_y=None, padding=10)
 scroll = ScrollView(size_hint=(1, None), size=(Window.width, Window.height))
 scroll.add_widget(timerLayout)
 frontLayout.add_widget(scroll)
@@ -90,15 +97,22 @@ frontLayout.add_widget(cardLayout)
 #фоны
 
 #Функции для работы приложения
-def someone(self):
-    print("test")
+def add_timer(name): # заменится классом
+    return Button(
+        text = name,
+        size_hint_y=None, height=40,
+        background_color = theme_colors["dark"],
+        background_normal='',
+    )
 
 def close_card(self = None):
-
+    global card_open
     if(len(cards_list) >= 5): print([item.id for item in cards_list])
 
     cardLayout.clear_widgets()
     widget_list.clear()
+
+    card_open = False
 
 def register_data(self):
     card_data = []
@@ -120,13 +134,7 @@ def register_data(self):
 
     cards_list.append(card)
 
-    btn = Button(
-        size_hint_y=None, height=40,
-        background_color = theme_colors["base"],
-        background_normal='',
-        )
-
-    timerLayout.add_widget(btn)
+    timerLayout.add_widget(add_timer(card.name))
 
     close_card()
 
@@ -138,6 +146,9 @@ def add_widlist(parent, list):
         parent.add_widget(widget)
 
 def create_card(instance):
+    global card_open
+    if card_open: return
+
     global widget_list
     widget_list = [
         Button(
@@ -197,6 +208,8 @@ def create_card(instance):
     widget_list[2].bind(on_press=close_card)
 
     add_widlist(cardLayout, widget_list)
+
+    card_open = True
 
 #Функции для работы приложения
 
