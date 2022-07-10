@@ -8,8 +8,12 @@ from kivy.uix.textinput import TextInput
 from kivy.core.audio import SoundLoader
 import random
 
-#массивы
 
+#Размер окна
+Window.size = (540, 900)
+#Размер окна
+
+#массивы
 theme_colors = {
     "white": "#FFFFFF",
     "black": "#222222",
@@ -21,6 +25,7 @@ theme_colors = {
 }
 
 cards_list = []
+#массивы
 
 #массивы
 
@@ -41,12 +46,29 @@ class Timer():
         pass
 
 class Card():
-    unc_id = 0
-    name = ''
-    description = ''
-    sound = ''
+    id = 0
+    sec = 0
+    min = 0
+    hour = 0
+    name = 'SimpleCard'
+    desc = 'Desc of SimpleCard'
+    sound = 'Simple sound of SimpleCard' # save path sound
 
-    #__timer = Timer()
+    def __init__(self, id, data):
+        self.id = id
+
+        try: self.sec = int(data[0])
+        except: pass
+        try: self.min = int(data[1])
+        except: pass
+        try: self.hour = int(data[2])
+        except: pass
+        try: self.name = str(data[3])
+        except: pass
+        try: self.desc = str(data[4])
+        except: pass
+        
+#классы
 
 #фоны
 mainBox = BoxLayout(padding=10)
@@ -55,10 +77,6 @@ frontLayout = FloatLayout()
 cardLayout = FloatLayout()
 frontLayout.add_widget(cardLayout)
 #фоны
-
-#Размер окна
-Window.size = (540, 900)
-#Размер окна
 
 #Функции для работы приложения
 def someone(self):
@@ -69,13 +87,22 @@ def close_card():
     widget_list.clear()
 
 def register_data(self):
-    card = Card()
-    card.unc_id = random.randint(1,10000)
-
+    card_data = []
+    
     for widget in widget_list:
         if(type(widget).__name__ == 'TextInput'):
+            card_data.append(widget.text)
 
-            print(widget.text)
+    card = Card(random.randint(1,10000), card_data)
+    print(f"""
+DEBUG of CARD:
+sec: {card.id}
+sec: {card.sec}
+min: {card.min}
+hour: {card.hour}
+name: {card.name}
+desc: {card.desc}
+    """)
 
     close_card()
 
@@ -154,10 +181,6 @@ def create_card(instance):
 
 #Функции для работы приложения
 
-#Массивы цветов
-light_gray = [217,217,217,1]
-#Массивы цветов
-
 class MainApp(App):
 
     def build(self):
@@ -195,6 +218,3 @@ class MainApp(App):
 if __name__ == '__main__':
     app = MainApp()
     app.run()
-
-
-
