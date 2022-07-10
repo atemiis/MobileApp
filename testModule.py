@@ -79,6 +79,12 @@ def register_data(self):
 
     close_card()
 
+def set_play_sound(path, volume):
+    sound = SoundLoader.load(path)
+    sound.volume = volume
+
+    sound.play()
+
 def convector(value, parent_value):
   return value/parent_value
 
@@ -87,9 +93,6 @@ def add_widlist(parent, list):
         parent.add_widget(widget)
 
 def create_card(instance):
-    sound = SoundLoader.load('sound.mp3')
-    sound.volume = 0.1
-    sound.play()
     global widget_list
     widget_list = [
         Button(
@@ -150,7 +153,6 @@ def create_card(instance):
     add_widlist(cardLayout, widget_list)
 
 #Функции для работы приложения
-
 
 #Массивы цветов
 light_gray = [217,217,217,1]
