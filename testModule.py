@@ -120,6 +120,14 @@ def register_data(self):
 
     cards_list.append(card)
 
+    btn = Button(
+        size_hint_y=None, height=40,
+        background_color = theme_colors["base"],
+        background_normal='',
+        )
+
+    timerLayout.add_widget(btn)
+
     close_card()
 
 def convector(value, parent_value):
@@ -195,10 +203,6 @@ def create_card(instance):
 class MainApp(App):
 
     def build(self):
-
-        for i in range(100):
-            btn = Button(text=str(i), size_hint_y=None, height=40)
-            timerLayout.add_widget(btn)
 
         background = Image(
             source='',
