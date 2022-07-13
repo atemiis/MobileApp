@@ -73,10 +73,9 @@ class Card():
         try: self.desc = str(data[4])
         except: pass
     
-    def set_play_sound(volume):
+    def play_sound(self, volume):
         sound = SoundLoader.load(self.path_sound)
-        sound.volume = volume
-
+        sound.volume = float(volume)
         sound.play()
 
 #class Timer(Card): 
@@ -131,6 +130,7 @@ def register_data(self):
     name: {card.name}
     desc: {card.desc}
     """)
+    card.play_sound(1)
 
     cards_list.append(card)
 
