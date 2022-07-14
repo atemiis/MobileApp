@@ -13,9 +13,6 @@ from kivy.core.audio import SoundLoader
 import random
 import time
 
-from matplotlib.pyplot import connect
-
-
 #Размер окна
 Window.size = (540, 900)
 #Размер окна
