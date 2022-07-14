@@ -13,6 +13,8 @@ from kivy.core.audio import SoundLoader
 import random
 import time
 
+from matplotlib.pyplot import connect
+
 
 #Размер окна
 Window.size = (540, 900)
@@ -21,6 +23,9 @@ Window.size = (540, 900)
 #переменные
 card_open = False
 un_id = 0
+connect_id = 0
+connect_button = {}
+
 standart_background_normal = "atlas://data/images/defaulttheme/button_disabled_pressed"
 standart_background_disabled_normal = "atlas://data/images/defaulttheme/button_disabled"
 standart_background_down = "atlas://data/images/defaulttheme/button_pressed"
@@ -43,18 +48,20 @@ cards_list = []
 
 #классы
 class Timer():
+    id = 0
     __starttime = 0
     __time = 0 # храним тут исходное время
     __pause = 0 # остановка времени
     __stop = True #остановка таймера
-    __connect = False
+    __connect_id = 0
     min = 0
     sec = 0
     hour = 0
 
-    def __init__(self, sec, min, hour):
+    def __init__(self, id, sec, min, hour):
+        self.id = id
         self.__time = ((hour * 60)*60) + min * 60 + sec # poebat perevod v seki
-
+        
         self.sec = sec
         self.min = min
         self.hour = hour
@@ -93,18 +100,31 @@ class Timer():
             button.background_color = theme_colors["accept"]
 
     def connect_button(self, button):
-        if self.__connect:
-            self.__connect = False
+        global connect_id
+        global connect_button
+
+        print(f"\n{connect_id}\n") # debug
+
+        if button == connect_button: # reset connect of button
+            connect_id = 0
             button.background_normal = ''
-        else:
-            self.__connect = True
+            button.text = ''
+        elif connect_id == 0: # search pair for connect
+            connect_id = self.id
+            connect_button = button
             button.background_normal = standart_background_down
+        else: # connect
+            self.__connect_id = connect_id
+            connect_id = 0 # end search
+            connect_button.background_normal = ''
+            button.text = str(self.__connect_id)
+            print(f"\n{self.id} connect to: {self.__connect_id}\n") # debug
 
         #Функции для работы приложения
-    def add_timer(self, name, desc): # заменится классом
+    def add_timer(self, id, name, desc): # заменится классом
         widget_list = [
         Button(
-                text = f'{name} : {desc} - {self.hour}:{self.min}:{self.sec}',
+                text = f'[{id}] {name} : {desc} - {self.hour}:{self.min}:{self.sec}',
                 size_hint_y=None, height=40,
                 background_color = theme_colors["dark"],
                 disabled_color = theme_colors['white'],
@@ -135,7 +155,7 @@ class Timer():
         return widget_list
 
 class Card():
-    __id = 0
+    id = 0
     sec = 0
     min = 0
     hour = 0
@@ -157,7 +177,7 @@ class Card():
         self.name = str(data[3])
         self.desc = str(data[4])
 
-        self.timer = Timer(self.sec, self.min, self.hour)
+        self.timer = Timer(self.id, self.sec, self.min, self.hour)
 
     def play_sound(self, volume):
         sound = SoundLoader.load(self.path_sound)
@@ -211,11 +231,11 @@ def register_data(self):
     name: {card.name}
     desc: {card.desc}
     """)
-    card.play_sound(.1)
+    #card.play_sound(.1)
 
     cards_list.append(card)
 
-    add_widlist(timerLayout,card.timer.add_timer(card.name, card.desc))
+    add_widlist(timerLayout,card.timer.add_timer(card.id, card.name, card.desc))
 
     close_card()
 
