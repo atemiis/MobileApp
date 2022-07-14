@@ -1,3 +1,5 @@
+from faulthandler import disable
+from turtle import pos
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.uix.button import Button
@@ -5,13 +7,24 @@ from kivy.uix.image import Image
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.textinput import TextInput
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.gridlayout import GridLayout
 from kivy.core.audio import SoundLoader
 import random
+import time
 
 
 #Размер окна
 Window.size = (540, 900)
 #Размер окна
+
+#переменные
+card_open = False
+un_id = 0
+standart_background_normal = "atlas://data/images/defaulttheme/button_disabled_pressed"
+standart_background_disabled_normal = "atlas://data/images/defaulttheme/button_disabled"
+standart_background_down = "atlas://data/images/defaulttheme/button_pressed"
+#переменные
 
 #массивы
 theme_colors = {
@@ -20,21 +33,31 @@ theme_colors = {
     "light": "#BAD9F1",
     "base": "#A3CAFF",
     "dark": "#699BE0",
-    "accept": "#78E289",
-    "denied": "#E27878"
+    "accept": "#8BFF88",
+    "denied": "#E27878",
+    "connect": "#E2A778"
 }
 
 cards_list = []
 #массивы
 
-#массивы
-
 #классы
 class Timer():
+    __starttime = 0
     __time = 0 # храним тут исходное время
+    __pause = 0 # остановка времени
+    __stop = True #остановка таймера
+    __connect = False
+    min = 0
+    sec = 0
+    hour = 0
 
-    def __init__(self, time):
-        self.__time = time
+    def __init__(self, sec, min, hour):
+        self.__time = ((hour * 60)*60) + min * 60 + sec # poebat perevod v seki
+
+        self.sec = sec
+        self.min = min
+        self.hour = hour
 
     def get_time(self):
         return self.__time
@@ -42,17 +65,84 @@ class Timer():
     def set_time(self, time):
         self.__time = time
 
+    def stop_timer(self):
+       self.__stop = True
+
+    def start_timer(self):
+        self.__stop = False
+        self.calculate_time()
+
     def calculate_time(self):
-        pass
+        self.__starttime = time.time() # время нажатия на кнопку начала действия таймера
+
+        while(not self.__stop):
+            tick = time.time()
+            print((self.__starttime + self.__time) - tick)
+            if(tick >= self.__starttime + self.__time):
+                self.__stop = True
+                return
+        else:
+            self.__time = (self.__starttime + self.__time) - tick
+
+    def manage_button(self, button):
+        if self.__stop:
+            self.start_timer()
+            button.background_color = theme_colors["denied"]
+        else:
+            self.stop_timer()
+            button.background_color = theme_colors["accept"]
+
+    def connect_button(self, button):
+        if self.__connect:
+            self.__connect = False
+            button.background_normal = ''
+        else:
+            self.__connect = True
+            button.background_normal = standart_background_down
+
+        #Функции для работы приложения
+    def add_timer(self, name, desc): # заменится классом
+        widget_list = [
+        Button(
+                text = f'{name} : {desc} - {self.hour}:{self.min}:{self.sec}',
+                size_hint_y=None, height=40,
+                background_color = theme_colors["dark"],
+                disabled_color = theme_colors['white'],
+                background_disabled_normal='',
+                disabled = True
+        ), 
+        Button(
+                text = f'',
+                size_hint_y=None, height=40,
+                background_color = theme_colors["accept"],
+                background_normal='',
+                size_hint_x=None,
+                width = 40
+            ),
+        Button(
+                text = f'',
+                size_hint_y=None, height=40,
+                background_color = theme_colors["connect"],
+                background_normal='',
+                size_hint_x=None,
+                width = 40
+            )
+        ]
+
+        widget_list[1].bind(on_press=self.manage_button)
+        widget_list[2].bind(on_press=self.connect_button)
+
+        return widget_list
 
 class Card():
-    id = 0
+    __id = 0
     sec = 0
     min = 0
     hour = 0
     name = 'SimpleCard'
     desc = 'Desc of SimpleCard'
-    sound = 'Simple sound of SimpleCard' # save path sound
+    path_sound = 'sound.mp3' # save path sound
+    timer = None
 
     def __init__(self, id, data):
         self.id = id
@@ -63,10 +153,19 @@ class Card():
         except: pass
         try: self.hour = int(data[2])
         except: pass
-        try: self.name = str(data[3])
-        except: pass
-        try: self.desc = str(data[4])
-        except: pass
+
+        self.name = str(data[3])
+        self.desc = str(data[4])
+
+        self.timer = Timer(self.sec, self.min, self.hour)
+
+    def play_sound(self, volume):
+        sound = SoundLoader.load(self.path_sound)
+        sound.volume = float(volume)
+        sound.play()
+
+#class Timer(Card): 
+# Наверное нужен отдельный класс для карточки таймера
         
 #классы
 
@@ -75,16 +174,22 @@ mainBox = BoxLayout(padding=10)
 backLayout = FloatLayout()
 frontLayout = FloatLayout()
 cardLayout = FloatLayout()
+timerLayout = GridLayout(cols=3, spacing=10, size_hint_y=None, padding=[20, 40])
+scroll = ScrollView(size_hint=(1, None), size=(Window.width, Window.height/1.1), pos = [0, Window.height - Window.height/1.1])
+scroll.add_widget(timerLayout)
+frontLayout.add_widget(scroll)
 frontLayout.add_widget(cardLayout)
 #фоны
 
-#Функции для работы приложения
-def someone(self):
-    print("test")
+def close_card(self = None):
+    global card_open
 
-def close_card():
+    if(len(cards_list) >= 5): print([item.id for item in cards_list])
+
     cardLayout.clear_widgets()
     widget_list.clear()
+
+    card_open = False
 
 def register_data(self):
     card_data = []
@@ -92,25 +197,27 @@ def register_data(self):
     for widget in widget_list:
         if(type(widget).__name__ == 'TextInput'):
             card_data.append(widget.text)
+    global un_id
 
-    card = Card(random.randint(1,10000), card_data)
+    un_id += 1
+
+    card = Card(un_id, card_data) 
     print(f"""
-DEBUG of CARD:
-sec: {card.id}
-sec: {card.sec}
-min: {card.min}
-hour: {card.hour}
-name: {card.name}
-desc: {card.desc}
+    DEBUG of CARD:
+    unic_id: {card.id}
+    sec: {card.sec}
+    min: {card.min}
+    hour: {card.hour}
+    name: {card.name}
+    desc: {card.desc}
     """)
+    card.play_sound(.1)
+
+    cards_list.append(card)
+
+    add_widlist(timerLayout,card.timer.add_timer(card.name, card.desc))
 
     close_card()
-
-def set_play_sound(path, volume):
-    sound = SoundLoader.load(path)
-    sound.volume = volume
-
-    sound.play()
 
 def convector(value, parent_value):
   return value/parent_value
@@ -119,14 +226,24 @@ def add_widlist(parent, list):
     for widget in list:
         parent.add_widget(widget)
 
-def create_card(instance):
+def create_card(button):
+    global card_open
+    if card_open: return
+
     global widget_list
     widget_list = [
         Button(
+            pos_hint={'center_x': .5, 'center_y': .5},
+            background_color = [0, 0, 0.2, 0.5],
+            background_disabled_normal = '',
+            disabled = True
+        ),
+        Button(
             size_hint=[convector(500, Window.width), convector(300, Window.height)],
             pos_hint={'center_x': .5, 'center_y': .5},
-            background_color = theme_colors["dark"],
-            background_normal='',
+            background_color = theme_colors["base"],
+            background_disabled_normal = '',
+            disabled = True
         ),
 
         Button(
@@ -162,7 +279,7 @@ def create_card(instance):
             multiline=False,
         ),
 
-        TextInput(text='Имя', font_size = 25,
+        TextInput(text='Название', font_size = 25,
             size_hint=[convector(480, Window.width), convector(50, Window.height)],
             pos_hint={'center_x': .5, 'center_y': convector(305, Window.width)},
             multiline=False,
@@ -175,15 +292,19 @@ def create_card(instance):
         )
     ]
 
-    widget_list[1].bind(on_press=register_data)
+    widget_list[2].bind(on_press=register_data)
+    widget_list[3].bind(on_press=close_card)
 
     add_widlist(cardLayout, widget_list)
+
+    card_open = True
 
 #Функции для работы приложения
 
 class MainApp(App):
 
     def build(self):
+
         background = Image(
             source='',
             allow_stretch = True,
