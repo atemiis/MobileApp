@@ -114,6 +114,7 @@ class Timer():
             self.__connect_id = connect_id
             connect_id = 0 # end search
             connect_button.background_normal = ''
+            connect_button = {}
             button.text = str(self.__connect_id)
             print(f"\n{self.id} connect to: {self.__connect_id}\n") # debug
 
