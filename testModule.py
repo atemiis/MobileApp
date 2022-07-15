@@ -23,6 +23,7 @@ card_open = False
 un_id = 0
 connect_id = 0
 connect_button = {}
+connect_timer = {}
 
 standart_background_normal = "atlas://data/images/defaulttheme/button_disabled_pressed"
 standart_background_disabled_normal = "atlas://data/images/defaulttheme/button_disabled"
@@ -42,6 +43,7 @@ theme_colors = {
 }
 
 cards_list = []
+timers_list = []
 #массивы
 
 #классы
@@ -52,6 +54,7 @@ class Timer():
     __pause = 0 # остановка времени
     __stop = True #остановка таймера
     __connect_id = 0
+    connect_attachts = []
     min = 0
     sec = 0
     hour = 0
@@ -94,13 +97,20 @@ class Timer():
 
         while(not self.__stop):
             tick = time.time()
-            print((self.__starttime + self.__time) - tick)
+            #print((self.__starttime + self.__time) - tick)
             self.widgets[0].text = f'[{self.id}] {int((self.__starttime + self.__time) - tick)}'
             if(tick >= self.__starttime + self.__time):
                 self.__stop = True
                 self.widgets[1].background_color = theme_colors['accept']
                 self.play_sound(.1)
                 self.widgets[0].text = text
+
+                for attach_timer in self.connect_attachts:
+                    print(f"attach: {attach_timer}")
+                    for timer in timers_list:
+                        if timer.id == attach_timer:
+                            timer.start_timer()
+
                 return
         else:
             self.__time = (self.__starttime + self.__time) - tick
@@ -122,23 +132,41 @@ class Timer():
     def connect_button(self, button):
         global connect_id
         global connect_button
+        global connect_timer
 
         # print(f"\n{connect_id}\n") # debug
 
         if button == connect_button: # reset connect of button
+            for timer in timers_list:
+                try: timer.connect_attachts.remove(self.id)
+                except: pass
+
+            self.__connect_id = 0
             connect_id = 0
             connect_button = {}
+            connect_timer = {}
             button.background_normal = ''
             button.text = ''
         elif connect_id == 0: # search pair for connect
             connect_id = self.id
             connect_button = button
+            connect_timer = self
             button.background_normal = standart_background_down
         else: # connect
+            try: connect_timer.connect_attachts.index(self.id)
+            except:
+                #connect_timer.connect_attachts.append(self.id) # почему-то добавляет элементы и в self и в connect_timer.connect_attachts
+                connect_timer.connect_attachts = [*connect_timer.connect_attachts, *[self.id]] # костыль
+
+            print(f'\n {self.id} with connect_timer {connect_timer.id}:')
+            print(self.connect_attachts)
+            print(connect_timer.connect_attachts)
+
             self.__connect_id = connect_id
             connect_id = 0 # end search
             connect_button.background_normal = ''
             connect_button = {}
+            connect_timer = {}
             button.text = str(self.__connect_id)
             # print(f"\n{self.id} connect to: {self.__connect_id}\n") # debug
 
@@ -198,6 +226,7 @@ class Card():
         self.desc = str(data[4])
 
         self.timer = Timer(self.id, self.sec, self.min, self.hour)
+        timers_list.append(self.timer)
 
 #фоны
 mainBox = BoxLayout(padding=10)
@@ -213,8 +242,6 @@ frontLayout.add_widget(cardLayout)
 
 def close_card(self = None):
     global card_open
-
-    if(len(cards_list) >= 5): print([item.id for item in cards_list])
 
     cardLayout.clear_widgets()
     widget_list.clear()
