@@ -1,4 +1,5 @@
 from faulthandler import disable
+import threading
 from turtle import pos
 from kivy.app import App
 from kivy.core.window import Window
@@ -55,6 +56,10 @@ class Timer():
     sec = 0
     hour = 0
 
+    path_sound = 'sound.mp3' # save path sound
+
+    widgets = [] # save components in object
+
     def __init__(self, id, sec, min, hour):
         self.id = id
         self.__time = ((hour * 60)*60) + min * 60 + sec # poebat perevod v seki
@@ -74,24 +79,42 @@ class Timer():
 
     def start_timer(self):
         self.__stop = False
-        self.calculate_time()
+        self.create_thread()
+
+        #button.background_color = theme_colors["accept"]
+
+    def create_thread(self):
+        thread = threading.Thread(target=self.calculate_time)
+
+        thread.start()
 
     def calculate_time(self):
         self.__starttime = time.time() # время нажатия на кнопку начала действия таймера
+        text = self.widgets[0].text
 
         while(not self.__stop):
             tick = time.time()
             print((self.__starttime + self.__time) - tick)
+            self.widgets[0].text = f'[{self.id}] {int((self.__starttime + self.__time) - tick)}'
             if(tick >= self.__starttime + self.__time):
                 self.__stop = True
+                self.widgets[1].background_color = theme_colors['accept']
+                self.play_sound(.1)
+                self.widgets[0].text = text
                 return
         else:
             self.__time = (self.__starttime + self.__time) - tick
+            self.widgets[1].background_color = theme_colors['accept']
+
+    def play_sound(self, volume):
+        sound = SoundLoader.load(self.path_sound)
+        sound.volume = float(volume)
+        sound.play()
 
     def manage_button(self, button):
         if self.__stop:
-            self.start_timer()
             button.background_color = theme_colors["denied"]
+            self.start_timer()
         else:
             self.stop_timer()
             button.background_color = theme_colors["accept"]
@@ -119,9 +142,8 @@ class Timer():
             button.text = str(self.__connect_id)
             # print(f"\n{self.id} connect to: {self.__connect_id}\n") # debug
 
-        #Функции для работы приложения
     def add_timer(self, id, name, desc): # заменится классом
-        widget_list = [
+        self.widgets = [
         Button(
                 text = f'[{id}] {name} : {desc} - {self.hour}:{self.min}:{self.sec}',
                 size_hint_y=None, height=40,
@@ -148,10 +170,10 @@ class Timer():
             )
         ]
 
-        widget_list[1].bind(on_press=self.manage_button)
-        widget_list[2].bind(on_press=self.connect_button)
+        self.widgets[1].bind(on_press=self.manage_button)
+        self.widgets[2].bind(on_press=self.connect_button)
 
-        return widget_list
+        return self.widgets
 
 class Card():
     id = 0
@@ -160,7 +182,6 @@ class Card():
     hour = 0
     name = 'SimpleCard'
     desc = 'Desc of SimpleCard'
-    path_sound = 'sound.mp3' # save path sound
     timer = None
 
     def __init__(self, id, data):
@@ -177,16 +198,6 @@ class Card():
         self.desc = str(data[4])
 
         self.timer = Timer(self.id, self.sec, self.min, self.hour)
-
-    def play_sound(self, volume):
-        sound = SoundLoader.load(self.path_sound)
-        sound.volume = float(volume)
-        sound.play()
-
-#class Timer(Card): 
-# Наверное нужен отдельный класс для карточки таймера
-        
-#классы
 
 #фоны
 mainBox = BoxLayout(padding=10)
