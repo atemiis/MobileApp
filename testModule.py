@@ -100,7 +100,7 @@ class Timer():
         global connect_id
         global connect_button
 
-        print(f"\n{connect_id}\n") # debug
+        # print(f"\n{connect_id}\n") # debug
 
         if button == connect_button: # reset connect of button
             connect_id = 0
@@ -116,7 +116,7 @@ class Timer():
             connect_button.background_normal = ''
             connect_button = {}
             button.text = str(self.__connect_id)
-            print(f"\n{self.id} connect to: {self.__connect_id}\n") # debug
+            # print(f"\n{self.id} connect to: {self.__connect_id}\n") # debug
 
         #Функции для работы приложения
     def add_timer(self, id, name, desc): # заменится классом
