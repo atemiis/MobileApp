@@ -104,6 +104,7 @@ class Timer():
 
         if button == connect_button: # reset connect of button
             connect_id = 0
+            connect_button = {}
             button.background_normal = ''
             button.text = ''
         elif connect_id == 0: # search pair for connect
